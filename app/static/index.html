@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#2C1A6B">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nisse">
+  <title>Nisse</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Caveat:wght@600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <!-- ===== LOADING OVERLAY ===== -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- ===== VIEW: LIST ===== -->
+  <section id="view-list" class="view">
+    <header class="app-header">
+      <div class="header-content">
+        <h1 class="app-title">Nisse</h1>
+        <div class="header-accent"></div>
+      </div>
+    </header>
+
+    <div class="list-toolbar">
+      <input
+        type="search"
+        id="search-input"
+        class="search-input"
+        placeholder="Search products…"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+      >
+    </div>
+
+    <main id="product-list" class="product-list" aria-label="Products">
+      <div class="list-loading">
+        <div class="shimmer-card"></div>
+        <div class="shimmer-card"></div>
+        <div class="shimmer-card"></div>
+      </div>
+    </main>
+
+    <button id="fab-add" class="fab" aria-label="Add product">
+      <span class="fab-icon">+</span>
+    </button>
+
+    <div id="publish-bar" class="publish-bar hidden">
+      <span id="publish-count" class="publish-count"></span>
+      <button id="publish-btn" class="btn-publish">Publish to site</button>
+    </div>
+
+    <div id="publish-progress" class="publish-progress hidden">
+      <div class="publish-progress-steps" id="publish-steps"></div>
+    </div>
+  </section>
+
+  <!-- ===== VIEW: EDITOR ===== -->
+  <section id="view-edit" class="view hidden">
+    <header class="editor-header">
+      <button id="back-btn" class="back-btn" aria-label="Back to products">
+        <span class="back-arrow">&#8592;</span>
+        <span class="back-label">Products</span>
+      </button>
+      <h2 id="editor-title" class="editor-title">New Product</h2>
+      <div id="autosave-indicator" class="autosave-indicator hidden">Saved</div>
+    </header>
+
+    <div class="editor-body">
+
+      <!-- Photo hero (full-bleed) -->
+      <div class="photo-hero" id="photo-hero">
+        <div id="photo-placeholder" class="photo-hero-placeholder" data-tint="teal">
+          <span class="photo-hero-placeholder-text">Tap to add photo</span>
+        </div>
+        <img id="photo-img" class="photo-hero-img hidden" alt="Product photo">
+        <button id="photo-btn" class="btn-photo-overlay" type="button">📷 Add photo</button>
+        <input id="photo-input" type="file" accept="image/*" class="visually-hidden" aria-label="Upload photo">
+      </div>
+
+      <!-- Form -->
+      <form id="product-form" class="product-form" novalidate>
+
+        <!-- Fast-capture fields (always visible) -->
+        <div class="field-group">
+          <label class="field-label" for="f-name">Product Name <span class="required">*</span></label>
+          <input type="text" id="f-name" name="name" class="field-input" required autocomplete="off">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="f-category">Category <span class="required">*</span></label>
+          <select id="f-category" name="category" class="field-select" required>
+            <option value="">Select category…</option>
+            <option value="Jewelry">Jewelry</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Botanical wellness">Botanical wellness</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="f-price">Price <span class="required">*</span></label>
+          <input type="text" id="f-price" name="price" class="field-input" placeholder="$0.00" required autocomplete="off">
+        </div>
+
+        <div class="field-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="f-sold" name="sold" class="toggle-input">
+            <span class="toggle-track">
+              <span class="toggle-thumb"></span>
+            </span>
+            <span class="toggle-text">Mark as sold</span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" id="save-btn" class="btn-save">Save Product</button>
+        </div>
+
+        <!-- Details expander -->
+        <div class="details-toggle" id="details-toggle">Add details ›</div>
+        <div class="details-body" id="details-body">
+
+          <div class="field-group">
+            <label class="field-label" for="f-short">Short Description</label>
+            <textarea id="f-short" name="short" class="field-textarea" rows="2"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="f-long">Long Description</label>
+            <textarea id="f-long" name="long" class="field-textarea" rows="4"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="f-materials">Materials</label>
+            <textarea id="f-materials" name="materials" class="field-textarea" rows="2"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="f-care">Care Instructions</label>
+            <textarea id="f-care" name="care" class="field-textarea" rows="2"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Tint</label>
+            <div class="tint-picker" id="tint-picker" role="radiogroup" aria-label="Tint color">
+              <button type="button" class="tint-swatch" data-tint="teal" aria-label="Teal" style="background:#1F8A72"></button>
+              <button type="button" class="tint-swatch" data-tint="indigo" aria-label="Indigo" style="background:#2C1A6B"></button>
+              <button type="button" class="tint-swatch" data-tint="lime" aria-label="Lime" style="background:#9BC53D"></button>
+              <button type="button" class="tint-swatch" data-tint="magenta" aria-label="Magenta" style="background:#A82E97"></button>
+            </div>
+            <input type="hidden" id="f-tint" name="tint">
+          </div>
+
+          <input type="hidden" id="f-sort-order" name="sort_order" value="0">
+
+          <!-- Live card preview -->
+          <div class="preview-section">
+            <p class="preview-label">Preview</p>
+            <div id="card-preview"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="delete-btn" class="btn-delete hidden">Delete Product</button>
+          </div>
+
+        </div><!-- end .details-body -->
+
+      </form>
+    </div>
+  </section>
+
+  <!-- Confirm dialog -->
+  <div id="confirm-overlay" class="confirm-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="confirm-dialog">
+      <h3 id="confirm-title" class="confirm-title">Delete product?</h3>
+      <p class="confirm-body">This cannot be undone.</p>
+      <div class="confirm-actions">
+        <button id="confirm-cancel" class="btn-confirm-cancel">Cancel</button>
+        <button id="confirm-ok" class="btn-confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
